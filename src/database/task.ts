@@ -1,5 +1,5 @@
-type statusTask = "pendente" | "concluída";
-type priorityTask = "baixa" | "média" | "alta";
+export type statusTask = "pendente" | "concluída";
+export type priorityTask = "baixa" | "média" | "alta";
 
 interface Task {
   id?: string;
