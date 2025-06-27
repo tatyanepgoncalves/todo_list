@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express"
-import { updateTaskMiddleware } from "../middleware/updateTaskMiddleware"
 import { tasks } from "../database/task"
+import { updateTaskMiddleware } from "../middleware/updateTaskMiddleware"
 
 export const updateTaskRouter = Router()
 
