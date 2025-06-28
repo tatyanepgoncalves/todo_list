@@ -1,34 +1,33 @@
 import { Router, Request, Response } from "express"
-import { tasks } from "../database/task"
 import { updateTaskMiddleware } from "../middleware/updateTaskMiddleware"
+import { prisma } from "../lib/prisma"
 
 export const updateTaskRouter = Router()
 
-interface CustomRequest extends Request {
-  taskId: number
-}
-
-
-updateTaskRouter.put("/tasks/:id", updateTaskMiddleware, (req: CustomRequest, res: Response) => {
+updateTaskRouter.put("/tasks/:id", updateTaskMiddleware, async (req: CustomRequest, res: Response) => {
+  const { id } = req.params
   const { name, category, updateIn, description, status, nivel, priority } = req.body
-  const taskId = req.taskId
-  const oldTask = tasks[taskId]
 
-  const updatedTask = {
-    ...oldTask,
-    name: name ?? oldTask.name,
-    category: category ?? oldTask.category,
-    description: description ?? oldTask.description,
-    status: status ?? oldTask.status,
-    nivel: nivel ?? oldTask.nivel,
-    priority: priority ?? oldTask.priority,
-    updateIn: updateIn ?? new Date().toISOString()
+  try {
+    const updatedTask = await prisma.task.update({
+      where: { id },
+      data: {
+        name,
+        category,
+        description,
+        status,
+        nivel,
+        priority,
+        updateIn: new Date()
+      }
+    })
+
+    return res.status(200).json({ 
+      message: "Task updated successfully!",
+      task: updatedTask
+    })
+  } catch (error) {
+    console.log("Updated error:", error)
+    return res.status(500).json({ message: "Failed to update task." })
   }
- 
-  tasks[taskId] = updatedTask
-
-  return res.status(200).json({ 
-    message: "Task update successfully!",
-    task: updatedTask
-  })
 })

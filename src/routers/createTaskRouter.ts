@@ -1,41 +1,29 @@
 import { Router, Request, Response } from "express"
-import { tasks } from "../database/task"
 import { createTaskMiddleware } from "../middleware/createTaskMiddleware"
-import { randomUUID } from "crypto"
-
-type statusTask = "pendente" | "concluída";
-type priorityTask = "baixa" | "média" | "alta";
-
-interface Task {
-  id?: string;
-  name: string;
-  category: string;
-  createdIn: string;
-  status: statusTask;
-  priority?: priorityTask;
-  description?: string;
-  updateIn?: string;
-}
+import { prisma } from "../lib/prisma"
 
 export const createTaskRouter = Router()
 
-createTaskRouter.post("/", createTaskMiddleware, (req: Request, res: Response): any => {
-  const { name, category, status = "pendente", description, createdIn, priority } = req.body
+createTaskRouter.post("/tasks", createTaskMiddleware, async (req: Request, res: Response) => {
+  const { name, category, status = "pendente", description, priority } = req.body
 
-  const newTask: Task = {
-    id: randomUUID(),
-    name, 
-    category, 
-    createdIn: new Date().toISOString(),
-    status,
-    description, 
-    priority, 
+  try {
+    const newTask = await prisma.task.create({
+      data: {
+        name,
+        category,
+        status,
+        description,
+        priority
+      }
+    })
+    return res.status(201).json({
+      message: "Task created sucessfully!",
+      task: newTask
+    })
+    
+  } catch (error) {
+    console.log("Error creating task", error)
+    return res.status(500).json({ message: "Failed to create task."})
   }
-
-  tasks.push(newTask)
-
-  return res.status(201).json({
-    message: "Task created sucessfully!",
-    task: newTask
-  })
 })

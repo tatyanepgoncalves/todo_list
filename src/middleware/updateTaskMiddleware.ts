@@ -1,20 +1,20 @@
 import { Request, Response, NextFunction } from "express";
-import { tasks } from "../database/task";
+import { prisma } from "../lib/prisma";
 
-export function updateTaskMiddleware(
+export async function updateTaskMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   const { id } = req.params
 
-  const taskId = tasks.findIndex((task) => task.id === id)
+  const task = await prisma.task.findUnique({ where: {id} })
 
-  if (taskId === -1) {
+  if (!task) {
     return res.status(404).json({ message: "Task not found." })
   }
 
-  (req as Request & { taskId: number }).taskId = taskId
+  (req as any).taskId = id
 
   return next()
 }
