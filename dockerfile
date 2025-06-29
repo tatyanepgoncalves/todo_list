@@ -22,4 +22,5 @@ COPY prisma ./prisma
 
 ENV NODE_ENV=production
 
+RUN npx prisma generate
 CMD ["node", "dist/server.js"]
