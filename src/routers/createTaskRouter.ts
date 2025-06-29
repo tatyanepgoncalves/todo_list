@@ -4,7 +4,7 @@ import { prisma } from "../lib/prisma"
 
 export const createTaskRouter = Router()
 
-createTaskRouter.post("/tasks", createTaskMiddleware, async (req: Request, res: Response) => {
+createTaskRouter.post("/tasks", createTaskMiddleware, async (req: Request, res: Response): Promise<void>  => {
   const { name, category, status = "pendente", description, priority } = req.body
 
   try {
@@ -17,13 +17,13 @@ createTaskRouter.post("/tasks", createTaskMiddleware, async (req: Request, res: 
         priority
       }
     })
-    return res.status(201).json({
+    res.status(201).json({
       message: "Task created sucessfully!",
       task: newTask
     })
     
   } catch (error) {
     console.log("Error creating task", error)
-    return res.status(500).json({ message: "Failed to create task."})
+    res.status(500).json({ message: "Failed to create task."})
   }
 })

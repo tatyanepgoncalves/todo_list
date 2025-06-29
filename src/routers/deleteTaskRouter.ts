@@ -5,7 +5,7 @@ import { deleteTaskMiddleware } from "../middleware/deleteTaskMiddleware"
 export const deleteTaskRouter = Router()
 
 
-deleteTaskRouter.delete("/tasks/:id", deleteTaskMiddleware, async (req: Request, res: Response) => {
+deleteTaskRouter.delete("/tasks/:id", deleteTaskMiddleware, async (req: Request, res: Response): Promise<void>  => {
   const { id } =  req.params
 
   try {
@@ -13,13 +13,13 @@ deleteTaskRouter.delete("/tasks/:id", deleteTaskMiddleware, async (req: Request,
       where: { id }
     })
     
-    return res.status(200).json({ 
+    res.status(200).json({ 
       message: "Task deleted successfully!",
       task: deleted
     })
   } catch (error) {
     console.error("Erro delele task:", error)
-    return res.status(500).json({ message: "Failed to delete task."})
+    res.status(500).json({ message: "Failed to delete task."})
   }
 
 

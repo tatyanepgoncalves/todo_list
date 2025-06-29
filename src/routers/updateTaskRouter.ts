@@ -4,9 +4,9 @@ import { prisma } from "../lib/prisma"
 
 export const updateTaskRouter = Router()
 
-updateTaskRouter.put("/tasks/:id", updateTaskMiddleware, async (req: CustomRequest, res: Response) => {
+updateTaskRouter.put("/tasks/:id", updateTaskMiddleware, async (req: Request, res: Response): Promise<void>  => {
   const { id } = req.params
-  const { name, category, updateIn, description, status, nivel, priority } = req.body
+  const { name, category, description, status, nivel, priority } = req.body
 
   try {
     const updatedTask = await prisma.task.update({
@@ -22,12 +22,12 @@ updateTaskRouter.put("/tasks/:id", updateTaskMiddleware, async (req: CustomReque
       }
     })
 
-    return res.status(200).json({ 
+    res.status(200).json({ 
       message: "Task updated successfully!",
       task: updatedTask
     })
   } catch (error) {
     console.log("Updated error:", error)
-    return res.status(500).json({ message: "Failed to update task." })
+    res.status(500).json({ message: "Failed to update task." })
   }
 })
