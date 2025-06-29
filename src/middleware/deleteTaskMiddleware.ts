@@ -1,20 +1,25 @@
 import { Request, Response, NextFunction } from "express";
-import { tasks } from "../database/task";
+import { prisma } from "../lib/prisma";
 
-export function deleteTaskMiddleware(
+export async function deleteTaskMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
-) {
+): Promise<void> {
   const { id } = req.params;
 
-  const taskId = tasks.findIndex((task) => task.id === id);
+  try {
+    const task = await prisma.task.findUnique({
+      where: { id }
+    })
 
-  if (taskId === -1) {
-    return res.status(404).json({ message: "Task not found." });
+    if (!task){
+      res.status(404).json({ message: "Task not found."})
+    }
+
+    return next()
+  } catch (error) {
+    console.error("Erro no middleware de delete:", error)
+    res.status(500).json({ message: "Erro ao validar task." })
   }
-
-  (req as Request & { taskId: number }).taskId = taskId;
-
-  return next();
 }

@@ -4,9 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --transpile-only src/server.ts",
+    "dev": "ts-node-dev --env-file=.env --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "lint": "eslint . --ext .ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "db:reset": "prisma migrate reset --force"
   },
   "repository": {
     "type": "git",
@@ -23,9 +30,13 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "ts-node-dev": "^2.0.0",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "@prisma/client": "^6.10.1",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "prisma": "^6.10.1"
   }
 }
