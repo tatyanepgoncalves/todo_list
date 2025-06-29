@@ -19,8 +19,10 @@ RUN npm install --only=production
 
 COPY --from=build /app/dist ./dist
 COPY prisma ./prisma
+COPY .env .env
 
 ENV NODE_ENV=production
 
 RUN npx prisma generate
+
 CMD ["node", "dist/server.js"]
